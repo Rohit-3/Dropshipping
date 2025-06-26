@@ -114,7 +114,7 @@ export default function CheckoutPage() {
   // Initialize Stripe on mount if keys are present
   useEffect(() => {
     if (hasStripeKeys() && subtotal > 0) handleStripeInit();
-  }, [subtotal]);
+  }, [subtotal, handleStripeInit]);
 
   return (
     <main className="container mx-auto py-8">

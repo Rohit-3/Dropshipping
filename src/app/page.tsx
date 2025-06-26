@@ -1,6 +1,3 @@
-import Image from "next/image";
-import styles from "./page.module.css";
-
 export default function HomePage() {
   return (
     <main className="container mx-auto py-16 px-4 text-center">
