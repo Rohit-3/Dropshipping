@@ -19,7 +19,7 @@ const stripePromise = hasStripeKeys()
   ? loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
   : null;
 
-function StripeCheckoutForm({ amount, currency, onSuccess }: { amount: number; currency: string; onSuccess: () => void }) {
+function StripeCheckoutForm({ onSuccess }: { onSuccess: () => void }) {
   const stripe = useStripe();
   const elements = useElements();
   const [loading, setLoading] = useState(false);
@@ -74,8 +74,8 @@ export default function CheckoutPage() {
       const data = await res.json();
       if (data.clientSecret) setClientSecret(data.clientSecret);
       else setError(data.error || "Failed to initialize payment");
-    } catch (e: any) {
-      setError(e.message);
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : String(e));
     } finally {
       setLoading(false);
     }
@@ -99,8 +99,8 @@ export default function CheckoutPage() {
       }
       clearCart();
       setSuccess(true);
-    } catch (e: any) {
-      setError(e.message);
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : String(e));
     } finally {
       setLoading(false);
     }
@@ -143,7 +143,7 @@ export default function CheckoutPage() {
             {hasStripeKeys() ? (
               clientSecret && stripePromise ? (
                 <Elements options={{ clientSecret }} stripe={stripePromise}>
-                  <StripeCheckoutForm amount={subtotal} currency="usd" onSuccess={handleOrder} />
+                  <StripeCheckoutForm onSuccess={handleOrder} />
                 </Elements>
               ) : (
                 <div>Loading payment form...</div>

@@ -1,7 +1,6 @@
 "use client";
 import { useRef, useState } from "react";
 import Papa from "papaparse";
-import { Product } from "@/lib/mockProducts";
 
 interface InventorySyncProps {
   onSync: (updates: { id: string; stock: number }[]) => void;
@@ -19,8 +18,8 @@ export default function InventorySync({ onSync }: InventorySyncProps) {
     Papa.parse(file, {
       header: true,
       complete: (results) => {
-        const updates = (results.data as any[]).map(row => ({
-          id: row.id,
+        const updates = (results.data as Record<string, unknown>[]).map(row => ({
+          id: row.id as string,
           stock: Number(row.stock),
         })).filter(r => r.id && !isNaN(r.stock));
         setPreview(updates);

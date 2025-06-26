@@ -6,8 +6,8 @@ import type { User } from "@supabase/supabase-js";
 interface AuthContextType {
   user: User | null;
   loading: boolean;
-  login: (email: string, password: string) => Promise<any>;
-  register: (email: string, password: string) => Promise<any>;
+  login: (email: string, password: string) => Promise<{ data: { user: User | null }; error: Error | null }>;
+  register: (email: string, password: string) => Promise<{ data: { user: User | null }; error: Error | null }>;
   logout: () => Promise<void>;
 }
 
@@ -31,20 +31,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  const login = async (email: string, password: string) => {
+  const login = async (email: string, password: string): Promise<{ data: { user: User | null }; error: Error | null }> => {
     setLoading(true);
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     setUser(data.user ?? null);
     setLoading(false);
-    return { data, error };
+    return { data: { user: data.user ?? null }, error: error as Error | null };
   };
 
-  const register = async (email: string, password: string) => {
+  const register = async (email: string, password: string): Promise<{ data: { user: User | null }; error: Error | null }> => {
     setLoading(true);
     const { data, error } = await supabase.auth.signUp({ email, password });
     setUser(data.user ?? null);
     setLoading(false);
-    return { data, error };
+    return { data: { user: data.user ?? null }, error: error as Error | null };
   };
 
   const logout = async () => {

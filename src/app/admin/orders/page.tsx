@@ -38,7 +38,7 @@ export default function AdminOrdersPage() {
       setLoading(true);
       getOrders()
         .then(setOrders)
-        .catch(e => setError(e.message))
+        .catch((e: unknown) => setError(e instanceof Error ? e.message : String(e)))
         .finally(() => setLoading(false));
     }
   }, []);
@@ -53,8 +53,8 @@ export default function AdminOrdersPage() {
       } else {
         setOrders(os => os.map(o => o.id === id ? { ...o, status } : o));
       }
-    } catch (e: any) {
-      setError(e.message);
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : String(e));
     } finally {
       setLoading(false);
     }

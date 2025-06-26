@@ -23,7 +23,7 @@ export default function AdminProductsPage() {
       setLoading(true);
       getProducts()
         .then(setProducts)
-        .catch(e => setError(e.message))
+        .catch(e => setError(e instanceof Error ? e.message : String(e)))
         .finally(() => setLoading(false));
     }
   }, []);
@@ -55,8 +55,8 @@ export default function AdminProductsPage() {
           setProducts(ps => [...ps, { ...product, id: Math.random().toString(36).slice(2) }]);
         }
       }
-    } catch (e: any) {
-      setError(e.message);
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : String(e));
     } finally {
       setLoading(false);
     }
@@ -71,8 +71,8 @@ export default function AdminProductsPage() {
       } else {
         setProducts(ps => ps.filter(p => p.id !== id));
       }
-    } catch (e: any) {
-      setError(e.message);
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : String(e));
     } finally {
       setLoading(false);
     }
@@ -99,8 +99,8 @@ export default function AdminProductsPage() {
           )
         );
       }
-    } catch (e: any) {
-      setError(e.message);
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : String(e));
     } finally {
       setLoading(false);
     }
