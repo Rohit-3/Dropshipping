@@ -13,13 +13,13 @@ export async function getRelevantImage(query: string): Promise<string> {
     }
     // fallback: return a placeholder
     return "/no-image.png";
-  } catch (e) {
+  } catch (_) {
     return "/no-image.png";
   }
 }
 
 // Mock: Get product recommendations for a user (to be replaced with real AI logic)
-export async function getRecommendations(userId: string) {
+export async function getRecommendations() {
   // TODO: Use Google AI to generate recommendations based on userId, history, etc.
   return [];
 } 
