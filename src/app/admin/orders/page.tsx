@@ -2,20 +2,22 @@
 import Link from "next/link";
 import RequireAuth from "../../components/RequireAuth";
 import { useEffect, useState } from "react";
-import { getOrders, updateOrderStatus } from "@/lib/supabaseOrders";
+import { getOrders, updateOrderStatus, Order } from "@/lib/supabaseOrders";
 
 // Mock order data
-const mockOrders = [
+const mockOrders: Order[] = [
   {
     id: "1001",
-    user: "alice@example.com",
+    user_id: "alice@example.com",
+    items: [],
     total: 49.98,
     status: "Pending",
     created_at: "2024-06-26T10:00:00Z",
   },
   {
     id: "1002",
-    user: "bob@example.com",
+    user_id: "bob@example.com",
+    items: [],
     total: 19.99,
     status: "Shipped",
     created_at: "2024-06-25T15:30:00Z",
@@ -27,7 +29,7 @@ function hasSupabaseKeys() {
 }
 
 export default function AdminOrdersPage() {
-  const [orders, setOrders] = useState<any[]>(mockOrders);
+  const [orders, setOrders] = useState<Order[]>(mockOrders);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -81,7 +83,7 @@ export default function AdminOrdersPage() {
               {orders.map(order => (
                 <tr key={order.id} className="border-b">
                   <td className="p-2">{order.id}</td>
-                  <td className="p-2">{order.user || order.user_id || "-"}</td>
+                  <td className="p-2">{order.user_id || "-"}</td>
                   <td className="p-2">${order.total?.toFixed(2)}</td>
                   <td className="p-2">{order.status}</td>
                   <td className="p-2">{new Date(order.created_at).toLocaleString()}</td>

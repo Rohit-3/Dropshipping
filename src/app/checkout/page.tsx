@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useCart } from "../providers/CartProvider";
 import { useAuth } from "../providers/AuthProvider";
 import { useState } from "react";
-import { addOrder } from "@/lib/supabaseOrders";
+import { addOrder, Order } from "@/lib/supabaseOrders";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import { getShippingRate } from "@/lib/shipping";
@@ -87,13 +87,15 @@ export default function CheckoutPage() {
     setError("");
     try {
       if (hasSupabaseKeys() && user) {
-        await addOrder({
+        const order: Order = {
+          id: "", // Supabase will auto-generate
           user_id: user.id,
           items,
           total: subtotal,
           status: "Paid",
           created_at: new Date().toISOString(),
-        });
+        };
+        await addOrder(order);
       }
       clearCart();
       setSuccess(true);

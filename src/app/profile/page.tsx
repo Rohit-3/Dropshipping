@@ -3,7 +3,7 @@ import Link from "next/link";
 import RequireAuth from "../components/RequireAuth";
 import { useAuth } from "../providers/AuthProvider";
 import { useEffect, useState } from "react";
-import { getUserOrders } from "@/lib/supabaseOrders";
+import { getUserOrders, Order } from "@/lib/supabaseOrders";
 
 function hasSupabaseKeys() {
   return Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
@@ -11,7 +11,7 @@ function hasSupabaseKeys() {
 
 export default function ProfilePage() {
   const { user } = useAuth();
-  const [orders, setOrders] = useState<any[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
