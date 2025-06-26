@@ -4,6 +4,7 @@ import "./globals.css";
 import NavBar from "./components/NavBar";
 import { AuthProvider } from "./providers/AuthProvider";
 import { CartProvider } from "./providers/CartProvider";
+import AIChatAssistant from "./components/AIChatAssistant";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -65,6 +66,7 @@ export default function RootLayout({
           <CartProvider>
             <NavBar />
             {children}
+            <AIChatAssistant />
           </CartProvider>
         </AuthProvider>
       </body>
