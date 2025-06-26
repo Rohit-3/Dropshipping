@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useCart } from "../providers/CartProvider";
 import { useAuth } from "../providers/AuthProvider";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { addOrder, Order } from "@/lib/supabaseOrders";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
@@ -107,12 +107,12 @@ export default function CheckoutPage() {
   };
 
   // Calculate shipping on mount or cart change
-  React.useEffect(() => {
+  useEffect(() => {
     getShippingRate(items).then(setShipping);
   }, [items]);
 
   // Initialize Stripe on mount if keys are present
-  React.useEffect(() => {
+  useEffect(() => {
     if (hasStripeKeys() && subtotal > 0) handleStripeInit();
   }, [subtotal]);
 
