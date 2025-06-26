@@ -13,7 +13,7 @@ export async function getRelevantImage(query: string): Promise<string> {
     }
     // fallback: return a placeholder
     return "/no-image.png";
-  } catch (_) {
+  } catch {
     return "/no-image.png";
   }
 }

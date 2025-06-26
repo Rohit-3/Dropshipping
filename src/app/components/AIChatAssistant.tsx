@@ -68,7 +68,8 @@ export default function AIChatAssistant() {
           </div>
           <form
             className="flex border-t"
-            onSubmit={() => {
+            onSubmit={e => {
+              e.preventDefault();
               sendMessage();
             }}
           >
