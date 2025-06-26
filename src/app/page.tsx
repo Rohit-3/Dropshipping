@@ -8,10 +8,10 @@ const categories = [
 ];
 
 const featuredProducts = [
-  { name: "Wireless Headphones", price: 99.99, image: "/product.jpg" },
-  { name: "Smart Watch", price: 149.99, image: "/product.jpg" },
-  { name: "Coffee Maker", price: 59.99, image: "/product.jpg" },
-  { name: "Bestseller Book", price: 19.99, image: "/product.jpg" },
+  { name: "Wireless Headphones", price: 99.99, image: "https://img.freepik.com/free-photo/modern-wireless-headphones-isolated-white-background_93675-128651.jpg?w=740&t=st=1719440000~exp=1719440600~hmac=1b2e3e4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f" },
+  { name: "Smart Watch", price: 149.99, image: "https://img.freepik.com/free-photo/smartwatch-white-background_53876-96809.jpg?w=740&t=st=1719440000~exp=1719440600~hmac=2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b" },
+  { name: "Coffee Maker", price: 59.99, image: "https://img.freepik.com/free-photo/coffee-machine-isolated-white-background_93675-133093.jpg?w=740&t=st=1719440000~exp=1719440600~hmac=3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d" },
+  { name: "Bestseller Book", price: 19.99, image: "https://img.freepik.com/free-photo/stack-books-isolated-white-background_93675-133062.jpg?w=740&t=st=1719440000~exp=1719440600~hmac=4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e" },
 ];
 
 export default function HomePage() {
@@ -36,7 +36,8 @@ export default function HomePage() {
 
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-blue-100 to-purple-100 py-10">
-        <div className="container mx-auto text-center">
+        <div className="container mx-auto text-center flex flex-col items-center">
+          <Image src="https://img.freepik.com/free-photo/shopping-cart-full-groceries-isolated-white-background_93675-133093.jpg?w=1060&t=st=1719440000~exp=1719440600~hmac=5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f" alt="EasyBuy Hero Banner" width={600} height={240} className="rounded-xl mb-6 shadow-lg object-cover" />
           <h2 className="text-4xl font-bold mb-4">Your Ultimate Shopping Destination</h2>
           <p className="text-lg text-gray-600 mb-6">Deals you can't resist. Delivered to your door.</p>
           <a href="/shop" className="bg-blue-700 text-white px-6 py-3 rounded-full">Shop Now</a>
