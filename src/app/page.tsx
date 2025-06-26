@@ -39,7 +39,7 @@ export default function HomePage() {
         <div className="container mx-auto text-center flex flex-col items-center">
           <Image src="https://img.freepik.com/free-photo/shopping-cart-full-groceries-isolated-white-background_93675-133093.jpg?w=1060&t=st=1719440000~exp=1719440600~hmac=5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f" alt="EasyBuy Hero Banner" width={600} height={240} className="rounded-xl mb-6 shadow-lg object-cover" />
           <h2 className="text-4xl font-bold mb-4">Your Ultimate Shopping Destination</h2>
-          <p className="text-lg text-gray-600 mb-6">Deals you can't resist. Delivered to your door.</p>
+          <p className="text-lg text-gray-600 mb-6">Deals you can&#39;t resist. Delivered to your door.</p>
           <a href="/shop" className="bg-blue-700 text-white px-6 py-3 rounded-full">Shop Now</a>
         </div>
       </section>
@@ -73,7 +73,7 @@ export default function HomePage() {
       <section className="bg-yellow-50 py-12">
         <div className="container mx-auto text-center">
           <h2 className="text-2xl font-bold">Flash Sale - Up to 60% Off!</h2>
-          <p className="text-gray-700 mt-2 mb-4">Limited time only. Grab your favorites before they're gone!</p>
+          <p className="text-gray-700 mt-2 mb-4">Limited time only. Grab your favorites before they&#39;re gone!</p>
           <button className="bg-black text-white px-5 py-2 rounded-md">View Deals</button>
         </div>
       </section>

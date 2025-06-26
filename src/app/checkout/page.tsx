@@ -61,25 +61,35 @@ export default function CheckoutPage() {
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [shipping, setShipping] = useState<number | null>(null);
 
-  // Stripe payment intent creation
-  const handleStripeInit = async () => {
-    setLoading(true);
-    setError("");
-    try {
-      const res = await fetch("/api/create-payment-intent", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ amount: Math.round(subtotal * 100), currency: "usd" }),
-      });
-      const data = await res.json();
-      if (data.clientSecret) setClientSecret(data.clientSecret);
-      else setError(data.error || "Failed to initialize payment");
-    } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : String(e));
-    } finally {
-      setLoading(false);
+  // Calculate shipping on mount or cart change
+  useEffect(() => {
+    getShippingRate(items).then(setShipping);
+  }, [items]);
+
+  // Initialize Stripe on mount if keys are present
+  useEffect(() => {
+    if (hasStripeKeys() && subtotal > 0) {
+      const handleStripeInit = async () => {
+        setLoading(true);
+        setError("");
+        try {
+          const res = await fetch("/api/create-payment-intent", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ amount: Math.round(subtotal * 100), currency: "usd" }),
+          });
+          const data = await res.json();
+          if (data.clientSecret) setClientSecret(data.clientSecret);
+          else setError(data.error || "Failed to initialize payment");
+        } catch (e: unknown) {
+          setError(e instanceof Error ? e.message : String(e));
+        } finally {
+          setLoading(false);
+        }
+      };
+      handleStripeInit();
     }
-  };
+  }, [subtotal]);
 
   // Place order after payment
   const handleOrder = async () => {
@@ -105,16 +115,6 @@ export default function CheckoutPage() {
       setLoading(false);
     }
   };
-
-  // Calculate shipping on mount or cart change
-  useEffect(() => {
-    getShippingRate(items).then(setShipping);
-  }, [items]);
-
-  // Initialize Stripe on mount if keys are present
-  useEffect(() => {
-    if (hasStripeKeys() && subtotal > 0) handleStripeInit();
-  }, [subtotal, handleStripeInit]);
 
   return (
     <main className="container mx-auto py-8">
