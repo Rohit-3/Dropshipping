@@ -39,6 +39,11 @@ export default function AIChatAssistant() {
     }
   }
 
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    sendMessage();
+  }
+
   return (
     <div>
       {/* Floating chat button */}
@@ -68,11 +73,7 @@ export default function AIChatAssistant() {
           </div>
           <form
             className="flex border-t"
-            onSubmit={e => {
-              // Prevent form submission from reloading the page (ESLint: e is used)
-              e.preventDefault();
-              sendMessage();
-            }}
+            onSubmit={handleSubmit}
           >
             <input
               className="flex-1 px-3 py-2 rounded-bl-xl outline-none"
