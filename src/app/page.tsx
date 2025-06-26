@@ -1,4 +1,6 @@
 import Image from "next/image";
+import { useEffect, useState } from "react";
+import { getRelevantImage } from "@/lib/googleAI";
 
 const categories = [
   "Electronics",
@@ -8,13 +10,32 @@ const categories = [
 ];
 
 const featuredProducts = [
-  { name: "Wireless Headphones", price: 99.99, image: "https://img.freepik.com/free-photo/modern-wireless-headphones-isolated-white-background_93675-128651.jpg?w=740&t=st=1719440000~exp=1719440600~hmac=1b2e3e4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f" },
-  { name: "Smart Watch", price: 149.99, image: "https://img.freepik.com/free-photo/smartwatch-white-background_53876-96809.jpg?w=740&t=st=1719440000~exp=1719440600~hmac=2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b" },
-  { name: "Coffee Maker", price: 59.99, image: "https://img.freepik.com/free-photo/coffee-machine-isolated-white-background_93675-133093.jpg?w=740&t=st=1719440000~exp=1719440600~hmac=3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d" },
-  { name: "Bestseller Book", price: 19.99, image: "https://img.freepik.com/free-photo/stack-books-isolated-white-background_93675-133062.jpg?w=740&t=st=1719440000~exp=1719440600~hmac=4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e" },
+  { name: "Wireless Headphones", price: 99.99 },
+  { name: "Smart Watch", price: 149.99 },
+  { name: "Coffee Maker", price: 59.99 },
+  { name: "Bestseller Book", price: 19.99 },
 ];
 
 export default function HomePage() {
+  const [productImages, setProductImages] = useState<string[]>(Array(featuredProducts.length).fill("/no-image.png"));
+  const [categoryImages, setCategoryImages] = useState<string[]>(Array(categories.length).fill("/no-image.png"));
+  const [heroImage, setHeroImage] = useState<string>("/no-image.png");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchImages() {
+      setLoading(true);
+      // Fetch hero image
+      getRelevantImage("shopping cart banner").then(setHeroImage);
+      // Fetch product images
+      Promise.all(featuredProducts.map(p => getRelevantImage(p.name))).then(setProductImages);
+      // Fetch category images
+      Promise.all(categories.map(c => getRelevantImage(c + " category"))).then(setCategoryImages);
+      setLoading(false);
+    }
+    fetchImages();
+  }, []);
+
   return (
     <div className="font-sans bg-gray-50 min-h-screen flex flex-col">
       {/* Header */}
@@ -37,7 +58,11 @@ export default function HomePage() {
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-blue-100 to-purple-100 py-10">
         <div className="container mx-auto text-center flex flex-col items-center">
-          <Image src="https://img.freepik.com/free-photo/shopping-cart-full-groceries-isolated-white-background_93675-133093.jpg?w=1060&t=st=1719440000~exp=1719440600~hmac=5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f" alt="EasyBuy Hero Banner" width={600} height={240} className="rounded-xl mb-6 shadow-lg object-cover" />
+          {loading ? (
+            <div className="w-[600px] h-[240px] flex items-center justify-center bg-gray-200 rounded-xl mb-6 animate-pulse">Loading...</div>
+          ) : (
+            <Image src={heroImage} alt="EasyBuy Hero Banner" width={600} height={240} className="rounded-xl mb-6 shadow-lg object-cover" />
+          )}
           <h2 className="text-4xl font-bold mb-4">Your Ultimate Shopping Destination</h2>
           <p className="text-lg text-gray-600 mb-6">Deals you can&#39;t resist. Delivered to your door.</p>
           <a href="/shop" className="bg-blue-700 text-white px-6 py-3 rounded-full">Shop Now</a>
@@ -46,8 +71,13 @@ export default function HomePage() {
 
       {/* Categories */}
       <section className="container mx-auto py-10 grid grid-cols-2 md:grid-cols-4 gap-6">
-        {categories.map((cat) => (
-          <div key={cat} className="bg-white shadow rounded-xl p-6 hover:scale-105 transition-transform cursor-pointer">
+        {categories.map((cat, i) => (
+          <div key={cat} className="bg-white shadow rounded-xl p-6 hover:scale-105 transition-transform cursor-pointer flex flex-col items-center">
+            {loading ? (
+              <div className="w-20 h-20 bg-gray-200 rounded-full mb-2 animate-pulse" />
+            ) : (
+              <Image src={categoryImages[i]} alt={cat} width={80} height={80} className="rounded-full mb-2 object-cover" />
+            )}
             <h3 className="text-xl font-semibold">{cat}</h3>
             <p className="text-gray-500">Explore {cat}</p>
           </div>
@@ -60,7 +90,11 @@ export default function HomePage() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           {featuredProducts.map((prod, i) => (
             <div key={i} className="bg-white p-4 shadow rounded-lg hover:shadow-lg transition-shadow">
-              <Image src={prod.image} alt={prod.name} width={300} height={160} className="h-40 w-full object-cover mb-4 rounded" />
+              {loading ? (
+                <div className="h-40 w-full bg-gray-200 rounded mb-4 animate-pulse" />
+              ) : (
+                <Image src={productImages[i]} alt={prod.name} width={300} height={160} className="h-40 w-full object-cover mb-4 rounded" />
+              )}
               <h4 className="font-semibold text-lg mb-2">{prod.name}</h4>
               <p className="text-gray-600">${prod.price.toFixed(2)}</p>
               <button className="mt-2 w-full bg-blue-700 text-white py-2 rounded">Add to Cart</button>
