@@ -1,3 +1,4 @@
+"use client";
 import Link from "next/link";
 import RequireAuth from "../../components/RequireAuth";
 import { mockProducts, Product } from "@/lib/mockProducts";

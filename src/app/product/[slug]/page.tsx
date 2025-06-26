@@ -1,3 +1,4 @@
+"use client";
 import { mockProducts } from "@/lib/mockProducts";
 import Link from "next/link";
 import { useEffect, useState } from "react";
