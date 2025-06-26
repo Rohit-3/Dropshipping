@@ -69,6 +69,7 @@ export default function AIChatAssistant() {
           <form
             className="flex border-t"
             onSubmit={e => {
+              // Prevent form submission from reloading the page (ESLint: e is used)
               e.preventDefault();
               sendMessage();
             }}
