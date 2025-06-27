@@ -2,14 +2,6 @@
 import Link from "next/link";
 import { useAuth } from "../providers/AuthProvider";
 
-const navLinks = [
-  { href: "/", label: "Home" },
-  { href: "/shop", label: "Shop" },
-  { href: "/cart", label: "Cart" },
-  { href: "/profile", label: "Profile" },
-  { href: "/admin", label: "Admin" },
-];
-
 export default function NavBar() {
   const { user, logout, loading } = useAuth();
 
