@@ -29,7 +29,7 @@ export default function AIChatAssistant() {
       const data = await res.json();
       const aiText = data.candidates?.[0]?.content?.parts?.[0]?.text || "Sorry, I couldn't find an answer.";
       setMessages(msgs => [...msgs, { role: "assistant", text: aiText }]);
-    } catch (e) {
+    } catch {
       setMessages(msgs => [...msgs, { role: "assistant", text: "Sorry, there was an error. Please try again." }]);
     } finally {
       setLoading(false);

@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { getProducts } from "@/lib/supabaseProducts";
 import { useParams } from "next/navigation";
 import { useCart } from "../../providers/CartProvider";
+import Image from "next/image";
 
 function hasSupabaseKeys() {
   return Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
@@ -61,11 +62,13 @@ export default function Page() {
   return (
     <main className="container mx-auto py-8">
       <div className="flex flex-col md:flex-row gap-8">
-        <img
+        <Image
           src={product.images[0]}
           alt={product.name}
+          width={600}
+          height={256}
           className="w-full md:w-1/2 h-64 object-cover rounded"
-          onError={e => (e.currentTarget.src = "/placeholder.png")}
+          onError={(e) => (e.currentTarget.src = "/placeholder.png")}
         />
         <div className="flex-1">
           <h1 className="text-3xl font-bold mb-2">{product.name}</h1>
