@@ -60,6 +60,9 @@ export default function CheckoutPage() {
   const [success, setSuccess] = useState(false);
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [shipping, setShipping] = useState<number | null>(null);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [address, setAddress] = useState("");
 
   // Calculate shipping on mount or cart change
   useEffect(() => {
@@ -116,54 +119,67 @@ export default function CheckoutPage() {
     }
   };
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+    try {
+      if (hasSupabaseKeys() && user) {
+        const order: Order = {
+          id: "", // Supabase will auto-generate
+          user_id: user.id,
+          items,
+          total: subtotal,
+          status: "Paid",
+          created_at: new Date().toISOString(),
+        };
+        await addOrder(order);
+      }
+      clearCart();
+      setSuccess(true);
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : String(e));
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <main className="bg-gray-50 min-h-screen">
       <div className="container mx-auto py-8">
         <h1 className="text-3xl font-bold mb-8 text-blue-700">Checkout</h1>
-        {success ? (
-          <div className="mb-6 text-green-600 text-lg">Order placed! Thank you for your purchase.</div>
-        ) : items.length === 0 ? (
-          <div className="mb-4 text-lg text-gray-600">Your cart is empty. <Link href="/shop" className="text-blue-600 hover:underline">Shop now</Link></div>
-        ) : (
-          <>
-            <div className="mb-6 bg-white rounded shadow p-6">
-              <h2 className="text-xl font-semibold mb-2">Order Summary</h2>
-              <ul className="mb-2">
-                {items.map(item => (
-                  <li key={item.product.id + item.variant.id}>
-                    {item.product.name} ({item.variant.color}/{item.variant.size}) x {item.quantity} — ${(item.product.price * item.quantity).toFixed(2)}
-                  </li>
-                ))}
-              </ul>
-              <div className="text-lg">Subtotal: ${subtotal.toFixed(2)}</div>
-              <div className="text-lg">Shipping: {shipping === null ? "..." : `$${shipping.toFixed(2)}`}</div>
-              <div className="text-lg font-semibold">Total: {shipping === null ? "..." : `$${(subtotal + shipping).toFixed(2)}`}</div>
-            </div>
-            <div className="mb-6 p-4 border rounded bg-card shadow">
-              <h2 className="text-lg font-semibold mb-2">Payment</h2>
-              {hasStripeKeys() ? (
-                clientSecret && stripePromise ? (
-                  <Elements options={{ clientSecret }} stripe={stripePromise}>
-                    <StripeCheckoutForm onSuccess={handleOrder} />
-                  </Elements>
-                ) : (
-                  <div>Loading payment form...</div>
-                )
-              ) : (
-                <>
-                  <div className="mb-2">Stripe payment form will go here.</div>
-                  <button className="btn btn-primary" onClick={handleOrder} disabled={loading}>
-                    {loading ? "Placing Order..." : "Place Order (Mock)"}
-                  </button>
-                </>
-              )}
-              {error && <div className="text-red-500 mt-2">{error}</div>}
-            </div>
-            <button className="btn btn-outline w-full md:w-auto" onClick={clearCart}>Cancel & Clear Cart</button>
-          </>
-        )}
-        <div className="mt-8">
-          <Link href="/cart" className="text-blue-600 hover:underline">Back to Cart</Link>
+        <div className="bg-white rounded shadow-lg p-8 max-w-lg mx-auto animate-fade-in">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+            <input
+              type="text"
+              placeholder="Full Name"
+              value={name}
+              onChange={e => setName(e.target.value)}
+              className="input input-bordered"
+              required
+            />
+            <input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              className="input input-bordered"
+              required
+            />
+            <input
+              type="text"
+              placeholder="Shipping Address"
+              value={address}
+              onChange={e => setAddress(e.target.value)}
+              className="input input-bordered"
+              required
+            />
+            <button type="submit" className="btn btn-primary" disabled={loading}>
+              {loading ? "Processing..." : "Place Order"}
+            </button>
+            {error && <div className="text-red-500 text-center animate-shake">{error}</div>}
+            {success && <div className="text-green-600 text-center animate-fade-in">{success}</div>}
+          </form>
         </div>
       </div>
     </main>
