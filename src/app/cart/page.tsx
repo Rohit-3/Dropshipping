@@ -37,7 +37,7 @@ export default function CartPage() {
                     <button className="btn btn-sm btn-outline" onClick={() => updateQuantity(item.product.id, item.variant.id, item.quantity - 1)} disabled={item.quantity <= 1}>-</button>
                     <span className="px-2">{item.quantity}</span>
                     <button className="btn btn-sm btn-outline" onClick={() => updateQuantity(item.product.id, item.variant.id, item.quantity + 1)} disabled={item.quantity >= item.variant?.stock}>+</button>
-                    <button className="btn btn-sm btn-error ml-4" onClick={() => removeFromCart(item.product.id)}>Remove</button>
+                    <button className="btn btn-sm btn-error ml-4" onClick={() => removeFromCart(item.product.id, item.variant.id)}>Remove</button>
                   </div>
                 </div>
               </div>
