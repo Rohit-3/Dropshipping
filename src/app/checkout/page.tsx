@@ -22,6 +22,7 @@ export default function CheckoutPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [address, setAddress] = useState("");
+  const [shipping, setShipping] = useState(0);
 
   // Calculate shipping on mount or cart change
   useEffect(() => {
