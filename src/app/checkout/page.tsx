@@ -1,12 +1,9 @@
 "use client";
 import { useCart } from "../providers/CartProvider";
 import { useAuth } from "../providers/AuthProvider";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { addOrder, Order } from "@/lib/supabaseOrders";
 
-function hasStripeKeys() {
-  return Boolean(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY && process.env.STRIPE_SECRET_KEY);
-}
 function hasSupabaseKeys() {
   return Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
 }
