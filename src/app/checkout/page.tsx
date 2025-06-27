@@ -3,7 +3,6 @@ import { useCart } from "../providers/CartProvider";
 import { useAuth } from "../providers/AuthProvider";
 import { useState, useEffect } from "react";
 import { addOrder, Order } from "@/lib/supabaseOrders";
-import { getShippingRate } from "@/lib/shipping";
 
 function hasStripeKeys() {
   return Boolean(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY && process.env.STRIPE_SECRET_KEY);
@@ -22,37 +21,6 @@ export default function CheckoutPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [address, setAddress] = useState("");
-  const [shipping, setShipping] = useState(0);
-
-  // Calculate shipping on mount or cart change
-  useEffect(() => {
-    getShippingRate(items).then(setShipping);
-  }, [items]);
-
-  // Initialize Stripe on mount if keys are present
-  useEffect(() => {
-    if (hasStripeKeys() && subtotal > 0) {
-      const handleStripeInit = async () => {
-        setLoading(true);
-        setError("");
-        try {
-          const res = await fetch("/api/create-payment-intent", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ amount: Math.round(subtotal * 100), currency: "usd" }),
-          });
-          const data = await res.json();
-          if (data.clientSecret) setClientSecret(data.clientSecret);
-          else setError(data.error || "Failed to initialize payment");
-        } catch (e: unknown) {
-          setError(e instanceof Error ? e.message : String(e));
-        } finally {
-          setLoading(false);
-        }
-      };
-      handleStripeInit();
-    }
-  }, [subtotal]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
