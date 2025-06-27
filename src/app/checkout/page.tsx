@@ -4,10 +4,6 @@ import { useAuth } from "../providers/AuthProvider";
 import { useState } from "react";
 import { addOrder, Order } from "@/lib/supabaseOrders";
 
-function hasSupabaseKeys() {
-  return Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
-}
-
 export default function CheckoutPage() {
   const { items, clearCart } = useCart();
   const { user } = useAuth();
@@ -24,7 +20,7 @@ export default function CheckoutPage() {
     setLoading(true);
     setError("");
     try {
-      if (hasSupabaseKeys() && user) {
+      if (user) {
         const order: Order = {
           id: "", // Supabase will auto-generate
           user_id: user.id,
