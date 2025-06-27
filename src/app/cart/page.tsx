@@ -21,7 +21,7 @@ export default function CartPage() {
             {items.map((item, idx) => (
               <div key={item.product.id + idx} className="bg-white rounded shadow-lg p-6 flex flex-col md:flex-row gap-4 animate-fade-in">
                 <Image
-                  src={item.product.image}
+                  src={item.product.images[0]}
                   alt={item.product.name}
                   width={120}
                   height={120}
