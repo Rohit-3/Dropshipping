@@ -61,11 +61,13 @@ export default function RootLayout({
         <meta name="twitter:description" content="Modern dropshipping eCommerce store. Shop the latest products with fast shipping and secure checkout." />
         <meta name="twitter:image" content="/og-image.png" />
       </head>
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
+      <body className={`bg-gray-50 min-h-screen ${geistSans.variable} ${geistMono.variable}`}>
         <AuthProvider>
           <CartProvider>
             <NavBar />
-            {children}
+            <main className="container mx-auto pt-4 pb-8 px-2 md:px-0">
+              {children}
+            </main>
             <AIChatAssistant />
           </CartProvider>
         </AuthProvider>

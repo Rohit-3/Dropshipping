@@ -14,18 +14,14 @@ export default function NavBar() {
   const { user, logout, loading } = useAuth();
 
   return (
-    <nav className="w-full border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
-      <div className="container mx-auto flex items-center justify-between py-4 px-2">
-        <div className="flex gap-6">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="text-base font-medium hover:text-primary transition-colors"
-            >
-              {link.label}
-            </Link>
-          ))}
+    <nav className="bg-white shadow sticky top-0 z-20">
+      <div className="container mx-auto flex items-center justify-between py-3 px-4 md:px-0">
+        <Link href="/" className="text-2xl font-bold text-blue-700">EasyBuy</Link>
+        <div className="flex gap-6 text-base">
+          <Link href="/shop" className="hover:text-blue-700">Shop</Link>
+          <Link href="/cart" className="hover:text-blue-700">Cart</Link>
+          <Link href="/profile" className="hover:text-blue-700">Profile</Link>
+          <Link href="/admin" className="hover:text-blue-700">Admin</Link>
         </div>
         <div className="flex items-center gap-4 text-xs text-muted-foreground">
           {loading ? (
