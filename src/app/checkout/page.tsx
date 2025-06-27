@@ -41,17 +41,18 @@ export default function CheckoutPage() {
   };
 
   return (
-    <main className="bg-gray-50 min-h-screen">
-      <div className="container mx-auto py-8">
-        <h1 className="text-3xl font-bold mb-8 text-blue-700">Checkout</h1>
-        <div className="bg-white rounded shadow-lg p-8 max-w-lg mx-auto animate-fade-in">
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+    <main className="bg-gradient-to-br from-blue-50 to-purple-50 min-h-screen flex items-center justify-center py-8 px-2">
+      <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-10 items-start">
+        {/* Checkout Form */}
+        <div className="bg-white rounded-2xl shadow-xl p-8 animate-fade-in border border-gray-100">
+          <h1 className="text-3xl font-bold mb-6 text-blue-700 text-center">Checkout</h1>
+          <form onSubmit={handleSubmit} className="flex flex-col gap-5">
             <input
               type="text"
               placeholder="Full Name"
               value={name}
               onChange={e => setName(e.target.value)}
-              className="input input-bordered"
+              className="input input-bordered px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition"
               required
             />
             <input
@@ -59,7 +60,7 @@ export default function CheckoutPage() {
               placeholder="Email"
               value={email}
               onChange={e => setEmail(e.target.value)}
-              className="input input-bordered"
+              className="input input-bordered px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition"
               required
             />
             <input
@@ -67,15 +68,38 @@ export default function CheckoutPage() {
               placeholder="Shipping Address"
               value={address}
               onChange={e => setAddress(e.target.value)}
-              className="input input-bordered"
+              className="input input-bordered px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition"
               required
             />
-            <button type="submit" className="btn btn-primary" disabled={loading}>
+            <button type="submit" className="btn btn-primary py-3 rounded-lg text-lg font-semibold mt-2" disabled={loading}>
               {loading ? "Processing..." : "Place Order"}
             </button>
             {error && <div className="text-red-500 text-center animate-shake">{error}</div>}
-            {success && <div className="text-green-600 text-center animate-fade-in">{success}</div>}
+            {success && <div className="text-green-600 text-center animate-fade-in">Order placed successfully!</div>}
           </form>
+        </div>
+        {/* Order Summary */}
+        <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100 animate-fade-in flex flex-col gap-6">
+          <h2 className="text-2xl font-bold text-blue-700 mb-4 text-center">Order Summary</h2>
+          <div className="divide-y divide-gray-200">
+            {items.length === 0 ? (
+              <div className="text-gray-400 text-center py-8">Your cart is empty.</div>
+            ) : (
+              items.map((item, idx) => (
+                <div key={idx} className="flex items-center justify-between py-3">
+                  <div>
+                    <div className="font-semibold text-gray-800">{item.product.name}</div>
+                    <div className="text-gray-500 text-sm">Qty: {item.quantity}</div>
+                  </div>
+                  <div className="font-semibold text-blue-700">${(item.product.price * item.quantity).toFixed(2)}</div>
+                </div>
+              ))
+            )}
+          </div>
+          <div className="flex items-center justify-between pt-6 text-lg font-bold">
+            <span>Subtotal</span>
+            <span className="text-blue-700">${subtotal.toFixed(2)}</span>
+          </div>
         </div>
       </div>
     </main>
