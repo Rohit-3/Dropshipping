@@ -10,7 +10,7 @@ function hasSupabaseKeys() {
 }
 
 export default function ProfilePage() {
-  const { user } = useAuth();
+  const { user, handleLogout } = useAuth();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -29,9 +29,29 @@ export default function ProfilePage() {
     <RequireAuth>
       <main className="bg-gray-50 min-h-screen">
         <div className="container mx-auto py-8">
-          <h1 className="text-3xl font-bold mb-8 text-blue-700">Profile</h1>
-          <div className="mb-4 text-lg text-gray-600">Order history and user info will appear here.</div>
-          {error && <div className="text-red-500 mb-2">{error}</div>}
+          <div className="bg-white rounded shadow-lg p-8 max-w-lg mx-auto animate-fade-in">
+            <h1 className="text-3xl font-bold mb-6 text-blue-700 text-center">Profile</h1>
+            {error && <div className="text-red-500 text-center animate-shake mb-4">{error}</div>}
+            {user ? (
+              <div className="flex flex-col gap-4">
+                <div className="flex items-center gap-4">
+                  <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center text-2xl font-bold text-blue-700">
+                    {user.email[0].toUpperCase()}
+                  </div>
+                  <div>
+                    <div className="text-lg font-semibold">{user.email}</div>
+                    <div className="text-gray-500">User ID: {user.id}</div>
+                  </div>
+                </div>
+                <div className="flex flex-col gap-2 mt-4">
+                  <button className="btn btn-outline btn-error" onClick={handleLogout}>Logout</button>
+                </div>
+              </div>
+            ) : (
+              <div className="text-gray-500 text-center">Not logged in.</div>
+            )}
+          </div>
+          <div className="mt-8 text-lg text-gray-600">Order history and user info will appear here.</div>
           {loading ? (
             <div>Loading orders...</div>
           ) : (
