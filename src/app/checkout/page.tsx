@@ -1,11 +1,8 @@
 "use client";
-import Link from "next/link";
 import { useCart } from "../providers/CartProvider";
 import { useAuth } from "../providers/AuthProvider";
 import { useState, useEffect } from "react";
 import { addOrder, Order } from "@/lib/supabaseOrders";
-import { loadStripe } from "@stripe/stripe-js";
-import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import { getShippingRate } from "@/lib/shipping";
 
 function hasStripeKeys() {
@@ -15,42 +12,6 @@ function hasSupabaseKeys() {
   return Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
 }
 
-const stripePromise = hasStripeKeys()
-  ? loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
-  : null;
-
-function StripeCheckoutForm({ onSuccess }: { onSuccess: () => void }) {
-  const stripe = useStripe();
-  const elements = useElements();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
-    if (!stripe || !elements) return;
-    const { error } = await stripe.confirmPayment({
-      elements,
-      confirmParams: {},
-      redirect: "if_required",
-    });
-    if (error) setError(error.message || "Payment failed");
-    else onSuccess();
-    setLoading(false);
-  };
-
-  return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-      <PaymentElement />
-      <button className="btn btn-primary" type="submit" disabled={loading}>
-        {loading ? "Processing..." : "Pay Now"}
-      </button>
-      {error && <div className="text-red-500 text-sm">{error}</div>}
-    </form>
-  );
-}
-
 export default function CheckoutPage() {
   const { items, clearCart } = useCart();
   const { user } = useAuth();
@@ -58,8 +19,6 @@ export default function CheckoutPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
-  const [clientSecret, setClientSecret] = useState<string | null>(null);
-  const [shipping, setShipping] = useState<number | null>(null);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [address, setAddress] = useState("");
@@ -93,31 +52,6 @@ export default function CheckoutPage() {
       handleStripeInit();
     }
   }, [subtotal]);
-
-  // Place order after payment
-  const handleOrder = async () => {
-    setLoading(true);
-    setError("");
-    try {
-      if (hasSupabaseKeys() && user) {
-        const order: Order = {
-          id: "", // Supabase will auto-generate
-          user_id: user.id,
-          items,
-          total: subtotal,
-          status: "Paid",
-          created_at: new Date().toISOString(),
-        };
-        await addOrder(order);
-      }
-      clearCart();
-      setSuccess(true);
-    } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : String(e));
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

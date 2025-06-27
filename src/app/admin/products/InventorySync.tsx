@@ -1,5 +1,5 @@
 "use client";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import Papa from "papaparse";
 
 interface InventorySyncProps {
@@ -7,28 +7,10 @@ interface InventorySyncProps {
 }
 
 export default function InventorySync({ onSync }: InventorySyncProps) {
-  const fileInput = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<{ id: string; stock: number }[]>([]);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [syncing, setSyncing] = useState(false);
-
-  const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setError("");
-    const file = e.target.files?.[0];
-    if (!file) return;
-    Papa.parse(file, {
-      header: true,
-      complete: (results) => {
-        const updates = (results.data as Record<string, unknown>[]).map(row => ({
-          id: row.id as string,
-          stock: Number(row.stock),
-        })).filter(r => r.id && !isNaN(r.stock));
-        setPreview(updates);
-      },
-      error: (err) => setError(err.message),
-    });
-  };
 
   const handleSync = () => {
     if (preview.length === 0) {

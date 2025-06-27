@@ -4,7 +4,7 @@ import { useCart } from "../providers/CartProvider";
 import Image from "next/image";
 
 export default function CartPage() {
-  const { items, updateQuantity, removeFromCart, clearCart } = useCart();
+  const { items, updateQuantity, removeFromCart } = useCart();
   const subtotal = items.reduce((sum, i) => sum + i.product.price * i.quantity, 0);
 
   return (

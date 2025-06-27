@@ -29,10 +29,6 @@ export default function AdminProductsPage() {
     }
   }, []);
 
-  const handleAdd = () => {
-    setEditProduct(null);
-    setModalOpen(true);
-  };
   const handleEdit = (product: Product) => {
     setEditProduct(product);
     setModalOpen(true);
