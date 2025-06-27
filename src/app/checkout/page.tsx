@@ -117,52 +117,54 @@ export default function CheckoutPage() {
   };
 
   return (
-    <main className="container mx-auto py-8">
-      <h1 className="text-3xl font-bold mb-4">Checkout</h1>
-      {success ? (
-        <div className="mb-6 text-green-600 text-lg">Order placed! Thank you for your purchase.</div>
-      ) : items.length === 0 ? (
-        <div className="mb-4">Your cart is empty. <Link href="/shop" className="text-blue-600 hover:underline">Shop now</Link></div>
-      ) : (
-        <>
-          <div className="mb-6">
-            <h2 className="text-xl font-semibold mb-2">Order Summary</h2>
-            <ul className="mb-2">
-              {items.map(item => (
-                <li key={item.product.id + item.variant.id}>
-                  {item.product.name} ({item.variant.color}/{item.variant.size}) x {item.quantity} — ${(item.product.price * item.quantity).toFixed(2)}
-                </li>
-              ))}
-            </ul>
-            <div className="text-lg">Subtotal: ${subtotal.toFixed(2)}</div>
-            <div className="text-lg">Shipping: {shipping === null ? "..." : `$${shipping.toFixed(2)}`}</div>
-            <div className="text-lg font-semibold">Total: {shipping === null ? "..." : `$${(subtotal + shipping).toFixed(2)}`}</div>
-          </div>
-          <div className="mb-6 p-4 border rounded bg-card">
-            <h2 className="text-lg font-semibold mb-2">Payment</h2>
-            {hasStripeKeys() ? (
-              clientSecret && stripePromise ? (
-                <Elements options={{ clientSecret }} stripe={stripePromise}>
-                  <StripeCheckoutForm onSuccess={handleOrder} />
-                </Elements>
+    <main className="bg-gray-50 min-h-screen">
+      <div className="container mx-auto py-8">
+        <h1 className="text-3xl font-bold mb-8 text-blue-700">Checkout</h1>
+        {success ? (
+          <div className="mb-6 text-green-600 text-lg">Order placed! Thank you for your purchase.</div>
+        ) : items.length === 0 ? (
+          <div className="mb-4 text-lg text-gray-600">Your cart is empty. <Link href="/shop" className="text-blue-600 hover:underline">Shop now</Link></div>
+        ) : (
+          <>
+            <div className="mb-6 bg-white rounded shadow p-6">
+              <h2 className="text-xl font-semibold mb-2">Order Summary</h2>
+              <ul className="mb-2">
+                {items.map(item => (
+                  <li key={item.product.id + item.variant.id}>
+                    {item.product.name} ({item.variant.color}/{item.variant.size}) x {item.quantity} — ${(item.product.price * item.quantity).toFixed(2)}
+                  </li>
+                ))}
+              </ul>
+              <div className="text-lg">Subtotal: ${subtotal.toFixed(2)}</div>
+              <div className="text-lg">Shipping: {shipping === null ? "..." : `$${shipping.toFixed(2)}`}</div>
+              <div className="text-lg font-semibold">Total: {shipping === null ? "..." : `$${(subtotal + shipping).toFixed(2)}`}</div>
+            </div>
+            <div className="mb-6 p-4 border rounded bg-card shadow">
+              <h2 className="text-lg font-semibold mb-2">Payment</h2>
+              {hasStripeKeys() ? (
+                clientSecret && stripePromise ? (
+                  <Elements options={{ clientSecret }} stripe={stripePromise}>
+                    <StripeCheckoutForm onSuccess={handleOrder} />
+                  </Elements>
+                ) : (
+                  <div>Loading payment form...</div>
+                )
               ) : (
-                <div>Loading payment form...</div>
-              )
-            ) : (
-              <>
-                <div className="mb-2">Stripe payment form will go here.</div>
-                <button className="btn btn-primary" onClick={handleOrder} disabled={loading}>
-                  {loading ? "Placing Order..." : "Place Order (Mock)"}
-                </button>
-              </>
-            )}
-            {error && <div className="text-red-500 mt-2">{error}</div>}
-          </div>
-          <button className="btn btn-outline" onClick={clearCart}>Cancel & Clear Cart</button>
-        </>
-      )}
-      <div className="mt-8">
-        <Link href="/cart" className="text-blue-600 hover:underline">Back to Cart</Link>
+                <>
+                  <div className="mb-2">Stripe payment form will go here.</div>
+                  <button className="btn btn-primary" onClick={handleOrder} disabled={loading}>
+                    {loading ? "Placing Order..." : "Place Order (Mock)"}
+                  </button>
+                </>
+              )}
+              {error && <div className="text-red-500 mt-2">{error}</div>}
+            </div>
+            <button className="btn btn-outline w-full md:w-auto" onClick={clearCart}>Cancel & Clear Cart</button>
+          </>
+        )}
+        <div className="mt-8">
+          <Link href="/cart" className="text-blue-600 hover:underline">Back to Cart</Link>
+        </div>
       </div>
     </main>
   );

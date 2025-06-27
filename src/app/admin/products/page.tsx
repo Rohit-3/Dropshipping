@@ -108,49 +108,53 @@ export default function AdminProductsPage() {
 
   return (
     <RequireAuth>
-      <main className="container mx-auto py-8">
-        <h1 className="text-3xl font-bold mb-4">Admin: Products</h1>
-        <InventorySync onSync={handleInventorySync} />
-        <div className="mb-4 flex justify-end">
-          <button className="btn btn-primary" onClick={handleAdd}>Add Product</button>
+      <main className="bg-gray-50 min-h-screen">
+        <div className="container mx-auto py-8">
+          <h1 className="text-3xl font-bold mb-8 text-blue-700">Admin: Products</h1>
+          <InventorySync onSync={handleInventorySync} />
+          <div className="mb-4 flex justify-end">
+            <button className="btn btn-primary" onClick={handleAdd}>Add Product</button>
+          </div>
+          {error && <div className="text-red-500 mb-2">{error}</div>}
+          {loading ? (
+            <div>Loading...</div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full mb-6 bg-white rounded shadow">
+                <thead>
+                  <tr className="border-b bg-blue-50">
+                    <th className="text-left p-2">Name</th>
+                    <th className="text-left p-2">Category</th>
+                    <th className="text-left p-2">Price</th>
+                    <th className="text-left p-2">In Stock</th>
+                    <th className="text-left p-2">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {products.map(product => (
+                    <tr key={product.id} className="border-b hover:bg-blue-50 transition">
+                      <td className="p-2 font-semibold">{product.name}</td>
+                      <td className="p-2">{product.category}</td>
+                      <td className="p-2">${product.price.toFixed(2)}</td>
+                      <td className="p-2">{product.inStock ? "Yes" : "No"}</td>
+                      <td className="p-2 flex gap-2">
+                        <button className="btn btn-sm btn-outline hover:bg-blue-100 hover:text-blue-700 transition" onClick={() => handleEdit(product)}>Edit</button>
+                        <button className="btn btn-sm btn-destructive hover:bg-red-100 hover:text-red-700 transition" onClick={() => handleDelete(product.id)}>Delete</button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+          <Link href="/admin" className="text-blue-600 hover:underline">Back to Dashboard</Link>
+          <ProductFormModal
+            open={modalOpen}
+            onClose={() => setModalOpen(false)}
+            onSave={handleSave}
+            initial={editProduct}
+          />
         </div>
-        {error && <div className="text-red-500 mb-2">{error}</div>}
-        {loading ? (
-          <div>Loading...</div>
-        ) : (
-          <table className="w-full mb-6">
-            <thead>
-              <tr className="border-b">
-                <th className="text-left p-2">Name</th>
-                <th className="text-left p-2">Category</th>
-                <th className="text-left p-2">Price</th>
-                <th className="text-left p-2">In Stock</th>
-                <th className="text-left p-2">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {products.map(product => (
-                <tr key={product.id} className="border-b">
-                  <td className="p-2">{product.name}</td>
-                  <td className="p-2">{product.category}</td>
-                  <td className="p-2">${product.price.toFixed(2)}</td>
-                  <td className="p-2">{product.inStock ? "Yes" : "No"}</td>
-                  <td className="p-2 flex gap-2">
-                    <button className="btn btn-sm btn-outline" onClick={() => handleEdit(product)}>Edit</button>
-                    <button className="btn btn-sm btn-destructive" onClick={() => handleDelete(product.id)}>Delete</button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-        <Link href="/admin" className="text-blue-600 hover:underline">Back to Dashboard</Link>
-        <ProductFormModal
-          open={modalOpen}
-          onClose={() => setModalOpen(false)}
-          onSave={handleSave}
-          initial={editProduct}
-        />
       </main>
     </RequireAuth>
   );

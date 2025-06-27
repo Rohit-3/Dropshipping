@@ -17,32 +17,34 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="container mx-auto py-8">
-      <h1 className="text-3xl font-bold mb-4">Login</h1>
-      <form onSubmit={handleSubmit} className="max-w-sm mx-auto flex flex-col gap-4">
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={e => setEmail(e.target.value)}
-          className="input input-bordered"
-          required
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={e => setPassword(e.target.value)}
-          className="input input-bordered"
-          required
-        />
-        <button type="submit" className="btn btn-primary" disabled={loading}>
-          {loading ? "Logging in..." : "Login"}
-        </button>
-        {error && <div className="text-red-500 text-sm">{error}</div>}
-      </form>
-      <div className="mt-4 text-center">
-        <Link href="/register" className="text-blue-600 hover:underline">Register</Link>
+    <main className="bg-gray-50 min-h-screen flex items-center justify-center">
+      <div className="bg-white rounded shadow-lg p-8 w-full max-w-md animate-fade-in">
+        <h1 className="text-3xl font-bold mb-6 text-blue-700 text-center">Login</h1>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            className="input input-bordered"
+            required
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            className="input input-bordered"
+            required
+          />
+          <button type="submit" className="btn btn-primary" disabled={loading}>
+            {loading ? "Logging in..." : "Login"}
+          </button>
+          {error && <div className="text-red-500 text-sm text-center animate-shake">{error}</div>}
+        </form>
+        <div className="mt-4 text-center">
+          <Link href="/register" className="text-blue-600 hover:underline">Register</Link>
+        </div>
       </div>
     </main>
   );

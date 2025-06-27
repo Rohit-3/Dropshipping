@@ -62,51 +62,55 @@ export default function AdminOrdersPage() {
 
   return (
     <RequireAuth>
-      <main className="container mx-auto py-8">
-        <h1 className="text-3xl font-bold mb-4">Admin: Orders</h1>
-        {error && <div className="text-red-500 mb-2">{error}</div>}
-        {loading ? (
-          <div>Loading...</div>
-        ) : (
-          <table className="w-full mb-6">
-            <thead>
-              <tr className="border-b">
-                <th className="text-left p-2">Order ID</th>
-                <th className="text-left p-2">User</th>
-                <th className="text-left p-2">Total</th>
-                <th className="text-left p-2">Status</th>
-                <th className="text-left p-2">Created</th>
-                <th className="text-left p-2">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {orders.map(order => (
-                <tr key={order.id} className="border-b">
-                  <td className="p-2">{order.id}</td>
-                  <td className="p-2">{order.user_id || "-"}</td>
-                  <td className="p-2">${order.total?.toFixed(2)}</td>
-                  <td className="p-2">{order.status}</td>
-                  <td className="p-2">{new Date(order.created_at).toLocaleString()}</td>
-                  <td className="p-2 flex gap-2">
-                    <button className="btn btn-sm btn-outline">View</button>
-                    <select
-                      className="input input-bordered input-sm"
-                      value={order.status}
-                      onChange={e => handleStatusUpdate(order.id, e.target.value)}
-                    >
-                      <option>Pending</option>
-                      <option>Processing</option>
-                      <option>Shipped</option>
-                      <option>Delivered</option>
-                      <option>Cancelled</option>
-                    </select>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-        <Link href="/admin" className="text-blue-600 hover:underline">Back to Dashboard</Link>
+      <main className="bg-gray-50 min-h-screen">
+        <div className="container mx-auto py-8">
+          <h1 className="text-3xl font-bold mb-8 text-blue-700">Admin: Orders</h1>
+          {error && <div className="text-red-500 mb-2">{error}</div>}
+          {loading ? (
+            <div>Loading...</div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full mb-6 bg-white rounded shadow">
+                <thead>
+                  <tr className="border-b bg-blue-50">
+                    <th className="text-left p-2">Order ID</th>
+                    <th className="text-left p-2">User</th>
+                    <th className="text-left p-2">Total</th>
+                    <th className="text-left p-2">Status</th>
+                    <th className="text-left p-2">Created</th>
+                    <th className="text-left p-2">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {orders.map(order => (
+                    <tr key={order.id} className="border-b hover:bg-blue-50 transition">
+                      <td className="p-2">{order.id}</td>
+                      <td className="p-2">{order.user_id || "-"}</td>
+                      <td className="p-2">${order.total?.toFixed(2)}</td>
+                      <td className="p-2">{order.status}</td>
+                      <td className="p-2">{new Date(order.created_at).toLocaleString()}</td>
+                      <td className="p-2 flex gap-2">
+                        <button className="btn btn-sm btn-outline hover:bg-blue-100 hover:text-blue-700 transition">View</button>
+                        <select
+                          className="input input-bordered input-sm"
+                          value={order.status}
+                          onChange={e => handleStatusUpdate(order.id, e.target.value)}
+                        >
+                          <option>Pending</option>
+                          <option>Processing</option>
+                          <option>Shipped</option>
+                          <option>Delivered</option>
+                          <option>Cancelled</option>
+                        </select>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+          <Link href="/admin" className="text-blue-600 hover:underline">Back to Dashboard</Link>
+        </div>
       </main>
     </RequireAuth>
   );

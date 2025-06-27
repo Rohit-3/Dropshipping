@@ -20,33 +20,35 @@ export default function RegisterPage() {
   };
 
   return (
-    <main className="container mx-auto py-8">
-      <h1 className="text-3xl font-bold mb-4">Register</h1>
-      <form onSubmit={handleSubmit} className="max-w-sm mx-auto flex flex-col gap-4">
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={e => setEmail(e.target.value)}
-          className="input input-bordered"
-          required
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={e => setPassword(e.target.value)}
-          className="input input-bordered"
-          required
-        />
-        <button type="submit" className="btn btn-primary" disabled={loading}>
-          {loading ? "Registering..." : "Register"}
-        </button>
-        {error && <div className="text-red-500 text-sm">{error}</div>}
-        {success && <div className="text-green-600 text-sm">{success}</div>}
-      </form>
-      <div className="mt-4 text-center">
-        <Link href="/login" className="text-blue-600 hover:underline">Login</Link>
+    <main className="bg-gray-50 min-h-screen flex items-center justify-center">
+      <div className="bg-white rounded shadow-lg p-8 w-full max-w-md animate-fade-in">
+        <h1 className="text-3xl font-bold mb-6 text-blue-700 text-center">Register</h1>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            className="input input-bordered"
+            required
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            className="input input-bordered"
+            required
+          />
+          <button type="submit" className="btn btn-primary" disabled={loading}>
+            {loading ? "Registering..." : "Register"}
+          </button>
+          {error && <div className="text-red-500 text-sm text-center animate-shake">{error}</div>}
+          {success && <div className="text-green-600 text-sm text-center animate-fade-in">{success}</div>}
+        </form>
+        <div className="mt-4 text-center">
+          <Link href="/login" className="text-blue-600 hover:underline">Login</Link>
+        </div>
       </div>
     </main>
   );
