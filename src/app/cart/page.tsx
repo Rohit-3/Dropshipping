@@ -34,9 +34,9 @@ export default function CartPage() {
                     <p className="text-lg font-bold">${item.product.price.toFixed(2)}</p>
                   </div>
                   <div className="flex items-center gap-2 mt-2">
-                    <button className="btn btn-sm btn-outline" onClick={() => updateQuantity(item.product.id, item.quantity - 1)} disabled={item.quantity <= 1}>-</button>
+                    <button className="btn btn-sm btn-outline" onClick={() => updateQuantity(item.product.id, item.variant.id, item.quantity - 1)} disabled={item.quantity <= 1}>-</button>
                     <span className="px-2">{item.quantity}</span>
-                    <button className="btn btn-sm btn-outline" onClick={() => updateQuantity(item.product.id, item.quantity + 1)} disabled={item.quantity >= item.variant?.stock}>+</button>
+                    <button className="btn btn-sm btn-outline" onClick={() => updateQuantity(item.product.id, item.variant.id, item.quantity + 1)} disabled={item.quantity >= item.variant?.stock}>+</button>
                     <button className="btn btn-sm btn-error ml-4" onClick={() => removeFromCart(item.product.id)}>Remove</button>
                   </div>
                 </div>
