@@ -10,6 +10,8 @@ export default function InventorySync({ onSync }: InventorySyncProps) {
   const fileInput = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<{ id: string; stock: number }[]>([]);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [syncing, setSyncing] = useState(false);
 
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     setError("");
@@ -28,33 +30,28 @@ export default function InventorySync({ onSync }: InventorySyncProps) {
     });
   };
 
+  const handleSync = () => {
+    if (preview.length === 0) {
+      setError("No items to sync");
+      return;
+    }
+    setSyncing(true);
+    onSync(preview);
+    setSuccess("Inventory synced successfully!");
+    setPreview([]);
+    setSyncing(false);
+  };
+
   return (
-    <div className="mb-6">
-      <label className="font-semibold mb-2 block">Inventory Sync (CSV)</label>
-      <input
-        type="file"
-        accept=".csv"
-        ref={fileInput}
-        onChange={handleFile}
-        className="mb-2"
-      />
-      {error && <div className="text-red-500 mb-2">{error}</div>}
-      {preview.length > 0 && (
-        <>
-          <div className="mb-2">Preview:</div>
-          <table className="w-full mb-2">
-            <thead>
-              <tr><th>ID</th><th>Stock</th></tr>
-            </thead>
-            <tbody>
-              {preview.map(row => (
-                <tr key={row.id}><td>{row.id}</td><td>{row.stock}</td></tr>
-              ))}
-            </tbody>
-          </table>
-          <button className="btn btn-primary" onClick={() => onSync(preview)}>Sync Inventory</button>
-        </>
+    <div className="bg-white rounded shadow-lg p-6 mt-8 animate-fade-in">
+      <h2 className="text-xl font-bold mb-4 text-blue-700">Inventory Sync</h2>
+      {syncing ? (
+        <div className="text-blue-600">Syncing inventory...</div>
+      ) : (
+        <button className="btn btn-primary" onClick={handleSync}>Sync Inventory</button>
       )}
+      {error && <div className="text-red-500 mt-2 animate-shake">{error}</div>}
+      {success && <div className="text-green-600 mt-2 animate-fade-in">{success}</div>}
     </div>
   );
 } 

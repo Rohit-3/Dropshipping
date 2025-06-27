@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import ProductFormModal from "./ProductFormModal";
 import { getProducts, addProduct, updateProduct, deleteProduct as deleteProductApi } from "@/lib/supabaseProducts";
 import InventorySync from "./InventorySync";
+import Image from "next/image";
 
 function hasSupabaseKeys() {
   return Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
@@ -112,48 +113,42 @@ export default function AdminProductsPage() {
         <div className="container mx-auto py-8">
           <h1 className="text-3xl font-bold mb-8 text-blue-700">Admin: Products</h1>
           <InventorySync onSync={handleInventorySync} />
-          <div className="mb-4 flex justify-end">
-            <button className="btn btn-primary" onClick={handleAdd}>Add Product</button>
-          </div>
           {error && <div className="text-red-500 mb-2">{error}</div>}
           {loading ? (
             <div>Loading...</div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full mb-6 bg-white rounded shadow">
-                <thead>
-                  <tr className="border-b bg-blue-50">
-                    <th className="text-left p-2">Name</th>
-                    <th className="text-left p-2">Category</th>
-                    <th className="text-left p-2">Price</th>
-                    <th className="text-left p-2">In Stock</th>
-                    <th className="text-left p-2">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {products.map(product => (
-                    <tr key={product.id} className="border-b hover:bg-blue-50 transition">
-                      <td className="p-2 font-semibold">{product.name}</td>
-                      <td className="p-2">{product.category}</td>
-                      <td className="p-2">${product.price.toFixed(2)}</td>
-                      <td className="p-2">{product.inStock ? "Yes" : "No"}</td>
-                      <td className="p-2 flex gap-2">
-                        <button className="btn btn-sm btn-outline hover:bg-blue-100 hover:text-blue-700 transition" onClick={() => handleEdit(product)}>Edit</button>
-                        <button className="btn btn-sm btn-destructive hover:bg-red-100 hover:text-red-700 transition" onClick={() => handleDelete(product.id)}>Delete</button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {products.map(product => (
+                <div key={product.id} className="bg-white rounded shadow-lg p-6 flex flex-col gap-4 animate-fade-in">
+                  <Image
+                    src={product.images[0]}
+                    alt={product.name}
+                    width={200}
+                    height={200}
+                    className="w-full h-40 object-cover rounded"
+                  />
+                  <div className="flex-1 flex flex-col justify-between">
+                    <h2 className="text-xl font-semibold text-blue-700">{product.name}</h2>
+                    <p className="text-gray-500 mb-2">{product.category}</p>
+                    <p className="text-lg font-bold mb-2">${product.price.toFixed(2)}</p>
+                    <div className="flex gap-2 mt-2">
+                      <button className="btn btn-sm btn-primary" onClick={() => handleEdit(product)}>Edit</button>
+                      <button className="btn btn-sm btn-error" onClick={() => handleDelete(product.id)}>Delete</button>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           )}
-          <Link href="/admin" className="text-blue-600 hover:underline">Back to Dashboard</Link>
-          <ProductFormModal
-            open={modalOpen}
-            onClose={() => setModalOpen(false)}
-            onSave={handleSave}
-            initial={editProduct}
-          />
+          <div className="mt-8">
+            <ProductFormModal
+              open={modalOpen}
+              onClose={() => setModalOpen(false)}
+              onSave={handleSave}
+              initial={editProduct}
+            />
+          </div>
+          <Link href="/admin" className="text-blue-600 hover:underline mt-8 block">Back to Dashboard</Link>
         </div>
       </main>
     </RequireAuth>
