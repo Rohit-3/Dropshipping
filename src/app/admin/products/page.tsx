@@ -4,8 +4,7 @@ import RequireAuth from "../../components/RequireAuth";
 import { mockProducts, Product } from "@/lib/mockProducts";
 import { useState, useEffect } from "react";
 import ProductFormModal from "./ProductFormModal";
-import { getProducts, addProduct, updateProduct, deleteProduct as deleteProductApi } from "@/lib/supabaseProducts";
-import InventorySync from "./InventorySync";
+import { getProducts, addProduct, updateProduct, deleteProduct } from "@/lib/supabaseProducts";
 import Image from "next/image";
 
 function hasSupabaseKeys() {
@@ -29,10 +28,6 @@ export default function AdminProductsPage() {
     }
   }, []);
 
-  const handleAdd = () => {
-    setEditProduct(null);
-    setModalOpen(true);
-  };
   const handleEdit = (product: Product) => {
     setEditProduct(product);
     setModalOpen(true);
@@ -67,38 +62,10 @@ export default function AdminProductsPage() {
     setError("");
     try {
       if (hasSupabaseKeys()) {
-        await deleteProductApi(id);
+        await deleteProduct(id);
         setProducts(await getProducts());
       } else {
         setProducts(ps => ps.filter(p => p.id !== id));
-      }
-    } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : String(e));
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleInventorySync = async (updates: { id: string; stock: number }[]) => {
-    setLoading(true);
-    setError("");
-    try {
-      if (hasSupabaseKeys()) {
-        for (const update of updates) {
-          const product = products.find(p => p.id === update.id);
-          if (product) {
-            await updateProduct({ ...product, variants: product.variants.map(v => ({ ...v, stock: update.stock })) });
-          }
-        }
-        setProducts(await getProducts());
-      } else {
-        setProducts(ps =>
-          ps.map(p =>
-            updates.some(u => u.id === p.id)
-              ? { ...p, variants: p.variants.map(v => ({ ...v, stock: updates.find(u => u.id === p.id)?.stock || v.stock })) }
-              : p
-          )
-        );
       }
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : String(e));
@@ -112,7 +79,10 @@ export default function AdminProductsPage() {
       <main className="bg-gray-50 min-h-screen">
         <div className="container mx-auto py-8">
           <h1 className="text-3xl font-bold mb-8 text-blue-700">Admin: Products</h1>
-          <InventorySync onSync={handleInventorySync} />
+          {/* TODO: Inventory Sync feature will be restored here in the future */}
+          <div className="mb-4 text-yellow-600 bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded animate-fade-in">
+            <strong>Inventory Sync is temporarily unavailable.</strong> This feature will be restored soon.
+          </div>
           {error && <div className="text-red-500 mb-2">{error}</div>}
           {loading ? (
             <div>Loading...</div>
@@ -143,12 +113,17 @@ export default function AdminProductsPage() {
           <div className="mt-8">
             <ProductFormModal
               open={modalOpen}
-              onClose={() => setModalOpen(false)}
+              onClose={() => { setModalOpen(false); setEditProduct(null); }}
               onSave={handleSave}
               initial={editProduct}
             />
+            <button className="btn btn-primary mt-4" onClick={() => { setModalOpen(true); setEditProduct(null); }}>
+              Add Product
+            </button>
           </div>
-          <Link href="/admin" className="text-blue-600 hover:underline mt-8 block">Back to Dashboard</Link>
+          <div className="mt-8">
+            <Link href="/admin" className="text-blue-600 hover:underline">Back to Dashboard</Link>
+          </div>
         </div>
       </main>
     </RequireAuth>

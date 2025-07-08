@@ -1,55 +1,8 @@
 "use client";
-import Link from "next/link";
 import { useCart } from "../providers/CartProvider";
 import { useAuth } from "../providers/AuthProvider";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { addOrder, Order } from "@/lib/supabaseOrders";
-import { loadStripe } from "@stripe/stripe-js";
-import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
-import { getShippingRate } from "@/lib/shipping";
-
-function hasStripeKeys() {
-  return Boolean(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY && process.env.STRIPE_SECRET_KEY);
-}
-function hasSupabaseKeys() {
-  return Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
-}
-
-const stripePromise = hasStripeKeys()
-  ? loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
-  : null;
-
-function StripeCheckoutForm({ onSuccess }: { onSuccess: () => void }) {
-  const stripe = useStripe();
-  const elements = useElements();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
-    if (!stripe || !elements) return;
-    const { error } = await stripe.confirmPayment({
-      elements,
-      confirmParams: {},
-      redirect: "if_required",
-    });
-    if (error) setError(error.message || "Payment failed");
-    else onSuccess();
-    setLoading(false);
-  };
-
-  return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-      <PaymentElement />
-      <button className="btn btn-primary" type="submit" disabled={loading}>
-        {loading ? "Processing..." : "Pay Now"}
-      </button>
-      {error && <div className="text-red-500 text-sm">{error}</div>}
-    </form>
-  );
-}
 
 export default function CheckoutPage() {
   const { items, clearCart } = useCart();
@@ -58,73 +11,16 @@ export default function CheckoutPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
-  const [clientSecret, setClientSecret] = useState<string | null>(null);
-  const [shipping, setShipping] = useState<number | null>(null);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [address, setAddress] = useState("");
-
-  // Calculate shipping on mount or cart change
-  useEffect(() => {
-    getShippingRate(items).then(setShipping);
-  }, [items]);
-
-  // Initialize Stripe on mount if keys are present
-  useEffect(() => {
-    if (hasStripeKeys() && subtotal > 0) {
-      const handleStripeInit = async () => {
-        setLoading(true);
-        setError("");
-        try {
-          const res = await fetch("/api/create-payment-intent", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ amount: Math.round(subtotal * 100), currency: "usd" }),
-          });
-          const data = await res.json();
-          if (data.clientSecret) setClientSecret(data.clientSecret);
-          else setError(data.error || "Failed to initialize payment");
-        } catch (e: unknown) {
-          setError(e instanceof Error ? e.message : String(e));
-        } finally {
-          setLoading(false);
-        }
-      };
-      handleStripeInit();
-    }
-  }, [subtotal]);
-
-  // Place order after payment
-  const handleOrder = async () => {
-    setLoading(true);
-    setError("");
-    try {
-      if (hasSupabaseKeys() && user) {
-        const order: Order = {
-          id: "", // Supabase will auto-generate
-          user_id: user.id,
-          items,
-          total: subtotal,
-          status: "Paid",
-          created_at: new Date().toISOString(),
-        };
-        await addOrder(order);
-      }
-      clearCart();
-      setSuccess(true);
-    } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : String(e));
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
     try {
-      if (hasSupabaseKeys() && user) {
+      if (user) {
         const order: Order = {
           id: "", // Supabase will auto-generate
           user_id: user.id,
@@ -145,17 +41,18 @@ export default function CheckoutPage() {
   };
 
   return (
-    <main className="bg-gray-50 min-h-screen">
-      <div className="container mx-auto py-8">
-        <h1 className="text-3xl font-bold mb-8 text-blue-700">Checkout</h1>
-        <div className="bg-white rounded shadow-lg p-8 max-w-lg mx-auto animate-fade-in">
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+    <main className="bg-gradient-to-br from-blue-50 to-purple-50 min-h-screen flex items-center justify-center py-8 px-2">
+      <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-10 items-start">
+        {/* Checkout Form */}
+        <div className="bg-white rounded-2xl shadow-xl p-8 animate-fade-in border border-gray-100">
+          <h1 className="text-3xl font-bold mb-6 text-blue-700 text-center">Checkout</h1>
+          <form onSubmit={handleSubmit} className="flex flex-col gap-5">
             <input
               type="text"
               placeholder="Full Name"
               value={name}
               onChange={e => setName(e.target.value)}
-              className="input input-bordered"
+              className="input input-bordered px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition"
               required
             />
             <input
@@ -163,7 +60,7 @@ export default function CheckoutPage() {
               placeholder="Email"
               value={email}
               onChange={e => setEmail(e.target.value)}
-              className="input input-bordered"
+              className="input input-bordered px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition"
               required
             />
             <input
@@ -171,15 +68,38 @@ export default function CheckoutPage() {
               placeholder="Shipping Address"
               value={address}
               onChange={e => setAddress(e.target.value)}
-              className="input input-bordered"
+              className="input input-bordered px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition"
               required
             />
-            <button type="submit" className="btn btn-primary" disabled={loading}>
+            <button type="submit" className="btn btn-primary py-3 rounded-lg text-lg font-semibold mt-2" disabled={loading}>
               {loading ? "Processing..." : "Place Order"}
             </button>
             {error && <div className="text-red-500 text-center animate-shake">{error}</div>}
-            {success && <div className="text-green-600 text-center animate-fade-in">{success}</div>}
+            {success && <div className="text-green-600 text-center animate-fade-in">Order placed successfully!</div>}
           </form>
+        </div>
+        {/* Order Summary */}
+        <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100 animate-fade-in flex flex-col gap-6">
+          <h2 className="text-2xl font-bold text-blue-700 mb-4 text-center">Order Summary</h2>
+          <div className="divide-y divide-gray-200">
+            {items.length === 0 ? (
+              <div className="text-gray-400 text-center py-8">Your cart is empty.</div>
+            ) : (
+              items.map((item, idx) => (
+                <div key={idx} className="flex items-center justify-between py-3">
+                  <div>
+                    <div className="font-semibold text-gray-800">{item.product.name}</div>
+                    <div className="text-gray-500 text-sm">Qty: {item.quantity}</div>
+                  </div>
+                  <div className="font-semibold text-blue-700">${(item.product.price * item.quantity).toFixed(2)}</div>
+                </div>
+              ))
+            )}
+          </div>
+          <div className="flex items-center justify-between pt-6 text-lg font-bold">
+            <span>Subtotal</span>
+            <span className="text-blue-700">${subtotal.toFixed(2)}</span>
+          </div>
         </div>
       </div>
     </main>

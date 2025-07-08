@@ -4,7 +4,7 @@ import { useCart } from "../providers/CartProvider";
 import Image from "next/image";
 
 export default function CartPage() {
-  const { items, updateQuantity, removeFromCart, clearCart } = useCart();
+  const { items, updateQuantity, removeFromCart } = useCart();
   const subtotal = items.reduce((sum, i) => sum + i.product.price * i.quantity, 0);
 
   return (
@@ -21,7 +21,7 @@ export default function CartPage() {
             {items.map((item, idx) => (
               <div key={item.product.id + idx} className="bg-white rounded shadow-lg p-6 flex flex-col md:flex-row gap-4 animate-fade-in">
                 <Image
-                  src={item.product.image}
+                  src={item.product.images[0]}
                   alt={item.product.name}
                   width={120}
                   height={120}
@@ -34,10 +34,10 @@ export default function CartPage() {
                     <p className="text-lg font-bold">${item.product.price.toFixed(2)}</p>
                   </div>
                   <div className="flex items-center gap-2 mt-2">
-                    <button className="btn btn-sm btn-outline" onClick={() => updateQuantity(item.product.id, item.quantity - 1)} disabled={item.quantity <= 1}>-</button>
+                    <button className="btn btn-sm btn-outline" onClick={() => updateQuantity(item.product.id, item.variant.id, item.quantity - 1)} disabled={item.quantity <= 1}>-</button>
                     <span className="px-2">{item.quantity}</span>
-                    <button className="btn btn-sm btn-outline" onClick={() => updateQuantity(item.product.id, item.quantity + 1)} disabled={item.quantity >= item.variant?.stock}>+</button>
-                    <button className="btn btn-sm btn-error ml-4" onClick={() => removeFromCart(item.product.id)}>Remove</button>
+                    <button className="btn btn-sm btn-outline" onClick={() => updateQuantity(item.product.id, item.variant.id, item.quantity + 1)} disabled={item.quantity >= item.variant?.stock}>+</button>
+                    <button className="btn btn-sm btn-error ml-4" onClick={() => removeFromCart(item.product.id, item.variant.id)}>Remove</button>
                   </div>
                 </div>
               </div>
